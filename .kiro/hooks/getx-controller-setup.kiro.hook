@@ -1,0 +1,17 @@
+{
+  "enabled": true,
+  "name": "GetX Controller Setup",
+  "description": "When a new controller file is created, ensure it follows GetX patterns with proper reactive programming setup",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "**/*_controller.dart",
+      "**/controllers/*.dart"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A new GetX controller file has been created or modified. Please review the file and ensure it follows GetX best practices including: \n1. Extends GetxController.\n2. Uses proper reactive variables (.obs for observables, Rx types).\n3. Implements proper lifecycle methods (onInit, onReady, onClose) if needed.\n4. Uses proper dependency injection patterns.\n5. Follows naming conventions (*Controller class name).\n6. Has proper imports from get package. If the file is incomplete or doesn't follow these patterns, provide suggestions or generate the proper boilerplate code."
+  }
+}

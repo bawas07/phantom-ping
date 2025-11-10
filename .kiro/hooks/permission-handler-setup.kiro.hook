@@ -1,0 +1,23 @@
+{
+  "enabled": true,
+  "name": "Permission Handler Setup",
+  "description": "When files dealing with permissions are created, implement proper permission checking and request flows",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "**/permission*.*",
+      "**/Permission*.*",
+      "**/permissions*.*",
+      "**/Permissions*.*",
+      "**/auth*.*",
+      "**/Auth*.*",
+      "**/access*.*",
+      "**/Access*.*"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A file related to permissions has been created or modified. Please review the file and implement proper permission checking and request flows. Ensure that:\n1. Permission checks are implemented before accessing protected resources\n2. Proper permission request flows are in place (request, check status, handle denial)\n3. User-friendly error messages are shown when permissions are denied\n4. Permissions are requested at appropriate times (runtime vs startup)\n5. Fallback behavior is implemented for denied permissions\n6. All necessary platform-specific permission declarations are included\nReview the code and add or improve the permission handling implementation."
+  }
+}

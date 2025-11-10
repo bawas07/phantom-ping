@@ -1,0 +1,21 @@
+{
+  "enabled": true,
+  "name": "Widget GetX Structure Setup",
+  "description": "Automatically sets up idiomatic Dart/GetX structure including controller, binding, and view files when new Widget files are created in the project",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "**/*_view.dart",
+      "**/*_page.dart",
+      "**/*_screen.dart",
+      "**/widgets/**/*.dart",
+      "**/pages/**/*.dart",
+      "**/screens/**/*.dart"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A new Widget file has been created or modified. Analyze the file and set up the idiomatic GetX structure if needed. This should include:\n1. Creating a corresponding controller file (*_controller.dart) with GetxController class\n2. Creating a binding file (*_binding.dart) with Bindings class\n3. Ensuring the view file properly uses GetView or Obx widgets\n4. Setting up proper imports and dependencies\n5. Following GetX best practices for state management and dependency injection\n\nEnsure the structure follows Flutter/GetX conventions with proper naming and organization."
+  }
+}

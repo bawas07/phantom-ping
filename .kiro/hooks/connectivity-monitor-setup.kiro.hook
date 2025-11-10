@@ -1,0 +1,20 @@
+{
+  "enabled": true,
+  "name": "Connectivity Monitor Setup",
+  "description": "When network-related files are created, set up connectivity_plus monitoring and offline handling",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "**/*network*.dart",
+      "**/*connectivity*.dart",
+      "**/*api*.dart",
+      "**/*http*.dart",
+      "**/*client*.dart"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Network-related files have been created or modified. Please review the changes and set up connectivity_plus monitoring with proper offline handling. Ensure that:\n1. connectivity_plus package is added to dependencies.\n2. connectivity monitoring service is implemented.\n3. offline state handling is configured.\n4. appropriate error handling for network failures is in place.\n5. UI feedback for connectivity status is considered."
+  }
+}
