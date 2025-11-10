@@ -1,0 +1,20 @@
+{
+  "enabled": true,
+  "name": "Secure Storage Helper",
+  "description": "When authentication or token-related files are created, ensure flutter_secure_storage is used instead of shared_preferences",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "**/*auth*.dart",
+      "**/*token*.dart",
+      "**/*login*.dart",
+      "**/*credential*.dart",
+      "**/*session*.dart"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Review the authentication or token-related file that was just created or modified. Check if it uses shared_preferences for storing sensitive data like tokens, passwords, or authentication credentials. If it does, provide a recommendation to use flutter_secure_storage instead, explaining why it's more secure for sensitive data. Include a code example showing how to replace shared_preferences with flutter_secure_storage for the specific use case in the file."
+  }
+}

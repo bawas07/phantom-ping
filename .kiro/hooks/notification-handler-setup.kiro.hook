@@ -1,0 +1,19 @@
+{
+  "enabled": true,
+  "name": "Notification Handler Setup",
+  "description": "When notification-related files are created, configure flutter_local_notifications with channels and proper permission handling",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "**/notification*.dart",
+      "**/push_notification*.dart",
+      "**/local_notification*.dart",
+      "**/notifications/*.dart"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A notification-related file has been created or modified. Please review the file and ensure that flutter_local_notifications is properly configured with:\n1. Notification channels (Android) with appropriate importance levels\n2. iOS notification permissions and settings\n3. Proper initialization in the main app entry point\n4. Permission request handling for both platforms\n5. Notification payload handling and routing\n6. Background notification handling if needed\n\nProvide code suggestions or modifications to ensure complete notification setup following Flutter best practices."
+  }
+}

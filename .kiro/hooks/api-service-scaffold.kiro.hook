@@ -1,0 +1,19 @@
+{
+  "enabled": true,
+  "name": "API Service Setup",
+  "description": "When a new service/repository file is created, scaffold it with Dio configuration, interceptors, and error handling",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "**/*service.dart",
+      "**/*repository.dart",
+      "**/services/**/*.dart",
+      "**/repositories/**/*.dart"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A new API service or repository file has been created. Please scaffold it with:\n1. Dio instance configuration with base URL and timeout settings\n2. Request/response interceptors for logging and token management\n3. Comprehensive error handling with custom exception classes\n4. Common HTTP methods (GET, POST, PUT, DELETE, PATCH)\n5. Proper typing and null safety\n6. Documentation comments\n\nEnsure the code follows Flutter/Dart best practices and is production-ready."
+  }
+}

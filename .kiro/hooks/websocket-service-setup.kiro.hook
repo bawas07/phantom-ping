@@ -1,0 +1,20 @@
+{
+  "enabled": true,
+  "name": "WebSocket Service Setup",
+  "description": "When a WebSocket-related file is created, set up proper connection handling, reconnection logic, and StreamBuilder patterns",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "**/*websocket*.dart",
+      "**/*ws*.dart",
+      "**/*socket*.dart",
+      "**/websocket/**/*.dart",
+      "**/socket/**/*.dart"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A WebSocket-related file has been created or modified. Please review the file and ensure it includes:\n\n1. Proper WebSocket connection handling with error handling\n2. Automatic reconnection logic with exponential backoff\n3. StreamBuilder or Stream patterns for reactive data handling\n4. Connection state management (connecting, connected, disconnected, error states)\n5. Proper cleanup and disposal methods\n6. Ping/pong heartbeat mechanism if appropriate\n7. Message queuing for offline scenarios if needed\n\nImplement these patterns following best practices for the detected framework/language, ensuring robust and production-ready WebSocket service implementation."
+  }
+}
