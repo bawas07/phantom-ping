@@ -7,7 +7,9 @@
   "scripts": {
     "dev": "bun --watch src/index.ts",
     "start": "bun src/index.ts",
-    "test": "bun test"
+    "test": "bun test",
+    "migrate": "bun scripts/migrate.ts",
+    "migration:status": "bun scripts/migration-status.ts"
   },
   "devDependencies": {
     "@types/bun": "latest",
