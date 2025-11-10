@@ -1,0 +1,17 @@
+{
+  "enabled": true,
+  "name": "Auth Security Audit",
+  "description": "Automatically reviews authentication code changes for common security issues like hardcoded secrets, weak hashing algorithms, and other vulnerabilities",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "backend/src/services/auth.ts",
+      "backend/src/middleware/auth.ts"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Review the changes in the authentication files for common security issues. Check for: hardcoded secrets or API keys, weak hashing algorithms (MD5, SHA1), missing input validation, improper error handling that leaks information, insecure token generation, missing rate limiting, SQL injection vulnerabilities, authentication bypass risks, insecure session management, and any other security best practice violations. Provide specific findings with severity levels and remediation recommendations."
+  }
+}

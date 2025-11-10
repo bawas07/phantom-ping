@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "TypeScript Type Checker",
+  "description": "Runs bun tsc --noEmit to check types whenever TypeScript files in the backend directory are saved",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "backend/**/*.ts"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Run `bun tsc --noEmit` to check for TypeScript type errors in the backend code. Report any type errors found, or confirm that type checking passed successfully."
+  }
+}

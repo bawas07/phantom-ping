@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Backend Test Runner",
+  "description": "Automatically runs relevant backend tests when TypeScript files in backend/src are saved",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "backend/src/**/*.ts"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A TypeScript file in backend/src has been modified. Analyze the changed file and run the relevant test files in backend/tests/ that cover this code. Provide immediate feedback on test results."
+  }
+}

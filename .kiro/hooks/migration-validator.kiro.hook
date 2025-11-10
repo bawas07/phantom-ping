@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Database Migration Validator",
+  "description": "Validates SQL syntax and checks for common migration issues when migration files are saved",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "backend/src/migrations/**/*.sql"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A SQL migration file has been modified. Please validate the SQL syntax and check for common migration issues including: 1) Syntax errors, 2) Missing rollback statements, 3) Destructive operations without safeguards (DROP, TRUNCATE), 4) Missing indexes on foreign keys, 5) Non-idempotent operations, 6) Performance concerns (full table scans, missing WHERE clauses in updates/deletes). Provide a clear report of any issues found and suggestions for improvement."
+  }
+}

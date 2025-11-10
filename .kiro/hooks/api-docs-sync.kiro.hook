@@ -1,0 +1,17 @@
+{
+  "enabled": true,
+  "name": "API Documentation Sync",
+  "description": "Automatically updates OpenAPI/Swagger documentation when backend route or service files are saved",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "backend/src/routes/**/*.ts",
+      "backend/src/services/**/*.ts"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Backend route or service files have been modified. Please analyze the changes and update the OpenAPI/Swagger documentation to reflect any new endpoints, modified request/response schemas, or changed service interfaces. Ensure the API documentation stays in sync with the implementation."
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Database Schema Sync Checker",
+  "description": "Monitors SQL migration files and verifies that TypeScript interfaces are in sync with the database schema changes",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "backend/src/migrations/**/*.sql"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A SQL migration file has been modified. Please analyze the database schema changes in the migration file and verify that the corresponding TypeScript interfaces in the codebase accurately reflect the database schema. Check for:\n1. New tables/columns that need corresponding TypeScript interface properties\n2. Modified column types that should be reflected in TypeScript types\n3. Removed columns that should be removed from interfaces\n4. Any type mismatches between SQL types and TypeScript types\n\nProvide a summary of any discrepancies found and suggest the necessary TypeScript interface updates to maintain sync with the database schema."
+  }
+}
