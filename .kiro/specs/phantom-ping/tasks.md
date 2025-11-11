@@ -52,15 +52,25 @@
 
 - [ ] 3. Implement backend core utilities and middleware
 
-  - [ ] 3.1 Create ID generation utility
+  - [x] 3.1 Create ID generation utility
+
+
+
+
+
 
     - Implement UUIDv7 generator function
     - Implement PIN generator (unique within organization)
     - _Requirements: 2.2, 2.4_
 
-  - [ ] 3.2 Create authentication utilities
+  - [x] 3.2 Create authentication utilities
 
-    - Implement bcrypt password hashing for PINs
+
+
+
+
+
+    - Implement sha-256 hashing for PINs
     - Implement JWT token generation and verification (15-minute expiration for access tokens)
     - Implement refresh token generation and storage
     - _Requirements: 9.1, 9.2_

@@ -561,7 +561,7 @@ interface ErrorResponse {
 ## Security Considerations
 
 ### Authentication
-- PINs hashed using bcrypt before storage
+- PINs hashed using sha-256 before storage
 - Access tokens (JWT) with short expiration (15 minutes)
 - Refresh tokens with longer expiration (7 days), stored in database
 - Automatic token refresh on access token expiration
