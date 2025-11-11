@@ -1,6 +1,11 @@
 # Implementation Plan
 
-- [-] 1. Set up backend project structure
+- [x] 1. Set up backend project structure
+
+
+
+
+
 
   - Create root `phantom-ping` directory with `backend/` subdirectory
   - Initialize Bun project in `backend/` directory with TypeScript configuration
@@ -16,7 +21,11 @@
   - Set up basic Flutter project structure
   - _Requirements: 13.1, 13.2, 13.3, 13.4_
 
-- [ ] 2. Implement backend database schema and migrations
+- [x] 2. Implement backend database schema and migrations
+
+
+
+
 
   - [x] 2.1 Set up database connection and migration system
 
@@ -25,7 +34,12 @@
     - Implement migration runner utility
     - _Requirements: 1.2, 1.3_
 
-  - [ ] 2.2 Create database schema migration
+  - [x] 2.2 Create database schema migration
+
+
+
+
+
     - Write SQL migration for users table with organization_id, name, email, pin_hash, role, supervisor_topic_id, notification_enabled
     - Write SQL migration for organizations table with id (max 15 chars), name, owner_id
     - Write SQL migration for topics table with id (UUIDv7), organization_id, name
@@ -36,29 +50,50 @@
     - Add all necessary indexes for performance
     - _Requirements: 1.1, 1.2, 2.1, 2.2, 5.1, 7.1, 11.5_
 
-- [ ] 3. Implement backend core utilities and middleware
+- [x] 3. Implement backend core utilities and middleware
 
-  - [ ] 3.1 Create ID generation utility
+
+
+
+
+  - [x] 3.1 Create ID generation utility
+
+
+
+
+
 
     - Implement UUIDv7 generator function
     - Implement PIN generator (unique within organization)
     - _Requirements: 2.2, 2.4_
 
-  - [ ] 3.2 Create authentication utilities
+  - [x] 3.2 Create authentication utilities
 
-    - Implement bcrypt password hashing for PINs
+
+
+
+
+
+    - Implement sha-256 hashing for PINs
     - Implement JWT token generation and verification (15-minute expiration for access tokens)
     - Implement refresh token generation and storage
     - _Requirements: 9.1, 9.2_
 
-  - [ ] 3.3 Create authentication middleware
+  - [x] 3.3 Create authentication middleware
+
+
+
+
+
 
     - Implement JWT verification middleware for protected routes
     - Extract user information from token and attach to request context
     - Handle token expiration errors
     - _Requirements: 9.2, 9.3_
 
-  - [ ] 3.4 Create authorization middleware
+  - [x] 3.4 Create authorization middleware
+
+
     - Implement role-based permission checking (Owner, Admin, Supervisor, Normal)
     - Implement organization membership verification
     - Implement topic permission verification for Supervisors
