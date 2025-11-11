@@ -50,7 +50,11 @@
     - Add all necessary indexes for performance
     - _Requirements: 1.1, 1.2, 2.1, 2.2, 5.1, 7.1, 11.5_
 
-- [ ] 3. Implement backend core utilities and middleware
+- [x] 3. Implement backend core utilities and middleware
+
+
+
+
 
   - [x] 3.1 Create ID generation utility
 
@@ -87,7 +91,9 @@
     - Handle token expiration errors
     - _Requirements: 9.2, 9.3_
 
-  - [ ] 3.4 Create authorization middleware
+  - [x] 3.4 Create authorization middleware
+
+
     - Implement role-based permission checking (Owner, Admin, Supervisor, Normal)
     - Implement organization membership verification
     - Implement topic permission verification for Supervisors
