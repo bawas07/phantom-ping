@@ -2,11 +2,6 @@
 
 - [x] 1. Set up backend project structure
 
-
-
-
-
-
   - Create root `phantom-ping` directory with `backend/` subdirectory
   - Initialize Bun project in `backend/` directory with TypeScript configuration
   - Create `.gitignore` file for backend
@@ -23,10 +18,6 @@
 
 - [x] 2. Implement backend database schema and migrations
 
-
-
-
-
   - [x] 2.1 Set up database connection and migration system
 
     - Install database driver (better-sqlite3 or pg for PostgreSQL)
@@ -35,10 +26,6 @@
     - _Requirements: 1.2, 1.3_
 
   - [x] 2.2 Create database schema migration
-
-
-
-
 
     - Write SQL migration for users table with organization_id, name, email, pin_hash, role, supervisor_topic_id, notification_enabled
     - Write SQL migration for organizations table with id (max 15 chars), name, owner_id
@@ -52,27 +39,13 @@
 
 - [x] 3. Implement backend core utilities and middleware
 
-
-
-
-
   - [x] 3.1 Create ID generation utility
-
-
-
-
-
 
     - Implement UUIDv7 generator function
     - Implement PIN generator (unique within organization)
     - _Requirements: 2.2, 2.4_
 
   - [x] 3.2 Create authentication utilities
-
-
-
-
-
 
     - Implement sha-256 hashing for PINs
     - Implement JWT token generation and verification (15-minute expiration for access tokens)
@@ -81,18 +54,12 @@
 
   - [x] 3.3 Create authentication middleware
 
-
-
-
-
-
     - Implement JWT verification middleware for protected routes
     - Extract user information from token and attach to request context
     - Handle token expiration errors
     - _Requirements: 9.2, 9.3_
 
   - [x] 3.4 Create authorization middleware
-
 
     - Implement role-based permission checking (Owner, Admin, Supervisor, Normal)
     - Implement organization membership verification
@@ -198,9 +165,9 @@
     - Add message payload validation
     - _Requirements: 10.1, 10.5, 11.1_
 
-- [ ] 9. Implement Flutter frontend authentication module
+- [x] 9. Implement Flutter frontend authentication module
 
-  - [ ] 9.1 Set up Flutter project dependencies
+  - [x] 9.1 Set up Flutter project dependencies
 
     - Add http package for REST API calls
     - Add web_socket_channel for WebSocket connection
@@ -208,7 +175,7 @@
     - Add provider or riverpod for state management
     - _Requirements: 9.1, 9.4, 10.1_
 
-  - [ ] 9.2 Create authentication service
+  - [x] 9.2 Create authentication service
 
     - Implement login function (call POST /api/auth/login)
     - Implement token storage (access token and refresh token)
@@ -216,7 +183,7 @@
     - Implement logout function (call POST /api/auth/logout, clear tokens)
     - _Requirements: 9.1, 9.2, 9.4_
 
-  - [ ] 9.3 Create login screen UI
+  - [x] 9.3 Create login screen UI
     - Create PIN input field
     - Create Organization ID input field
     - Create login button with loading state
