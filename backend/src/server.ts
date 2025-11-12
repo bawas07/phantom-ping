@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import { logger } from './logger';
+import auth from './routes/auth';
 
 const app = new Hono();
 
@@ -7,6 +8,9 @@ const app = new Hono();
 app.get('/health', (c) => {
   return c.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
+
+// Mount auth routes
+app.route('/api/auth', auth);
 
 const PORT = process.env.PORT || 3000;
 

@@ -10,3 +10,10 @@ export {
   requireTopicPermission
 } from './authorization';
 export type { AuthorizationOptions, UserRole } from './authorization';
+
+export { 
+  validateBody, 
+  validateQuery, 
+  getValidatedBody, 
+  getValidatedQuery 
+} from './validation';

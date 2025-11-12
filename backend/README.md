@@ -57,7 +57,42 @@ backend/
 
 ## API Documentation
 
-See the design document for detailed API specifications.
+The backend API is documented using OpenAPI 3.0 specification. See `openapi.yaml` for the complete API reference.
+
+### Viewing the Documentation
+
+You can view the API documentation using any OpenAPI-compatible tool:
+
+**Online Viewers:**
+- [Swagger Editor](https://editor.swagger.io/) - Paste the contents of `openapi.yaml`
+- [Redoc](https://redocly.github.io/redoc/) - Interactive API documentation
+
+**Local Tools:**
+```bash
+# Install Swagger UI locally
+npx swagger-ui-watcher openapi.yaml
+```
+
+### API Overview
+
+**Base URL:** `http://localhost:3000` (development)
+
+**Authentication Endpoints:**
+- `POST /api/auth/login` - User login with PIN and Organization ID
+- `POST /api/auth/refresh` - Refresh access token using refresh token
+- `POST /api/auth/logout` - Invalidate refresh token
+
+**Standard Response Format:**
+All endpoints return responses in this format:
+```json
+{
+  "status": boolean,
+  "message": "Human-readable message",
+  "data": {}
+}
+```
+
+For detailed request/response schemas, error codes, and examples, refer to `openapi.yaml`.
 
 ## Technology Stack
 
