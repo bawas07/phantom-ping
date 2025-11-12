@@ -66,7 +66,10 @@
     - Implement topic permission verification for Supervisors
     - _Requirements: 3.1, 3.2, 4.1, 5.1.1, 7.1, 8.1_
 
-  - [ ] 3.5 Update existing middleware to use standardized API response format
+  - [x] 3.5 Update existing middleware to use standardized API response format
+
+
+
     - Update auth middleware error responses to use `{status: false, message: string, data: {code: string}}` format
     - Update authorization middleware error responses to use standardized format
     - Update corresponding middleware tests to expect new response format

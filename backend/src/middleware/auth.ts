@@ -1,5 +1,6 @@
 import type { Context, Next } from 'hono';
 import { verifyToken, type JWTPayload } from '@/utils/auth';
+import { ApiError } from '@/utils/apiResponse';
 
 /**
  * Extended context with authenticated user information
@@ -25,15 +26,7 @@ export async function authMiddleware(c: Context, next: Next) {
     const authHeader = c.req.header('Authorization');
     
     if (!authHeader) {
-      return c.json(
-        {
-          error: {
-            code: 'AUTH_UNAUTHORIZED',
-            message: 'Missing authorization header',
-          },
-        },
-        401
-      );
+      return ApiError.unauthorized(c, 'Missing authorization header');
     }
 
     // Check for Bearer token format
@@ -41,9 +34,10 @@ export async function authMiddleware(c: Context, next: Next) {
     if (parts.length !== 2 || parts[0] !== 'Bearer') {
       return c.json(
         {
-          error: {
+          status: false,
+          message: 'Invalid authorization header format. Expected: Bearer <token>',
+          data: {
             code: 'AUTH_UNAUTHORIZED',
-            message: 'Invalid authorization header format. Expected: Bearer <token>',
           },
         },
         401
@@ -63,9 +57,10 @@ export async function authMiddleware(c: Context, next: Next) {
       if (errorMessage.includes('expired')) {
         return c.json(
           {
-            error: {
+            status: false,
+            message: 'Access token has expired. Please refresh your token.',
+            data: {
               code: 'AUTH_TOKEN_EXPIRED',
-              message: 'Access token has expired. Please refresh your token.',
             },
           },
           401
@@ -75,9 +70,10 @@ export async function authMiddleware(c: Context, next: Next) {
       // Handle other token verification errors
       return c.json(
         {
-          error: {
+          status: false,
+          message: 'Invalid or malformed token',
+          data: {
             code: 'AUTH_INVALID_TOKEN',
-            message: 'Invalid or malformed token',
             details: errorMessage,
           },
         },
@@ -89,9 +85,10 @@ export async function authMiddleware(c: Context, next: Next) {
     if (payload.type !== 'access') {
       return c.json(
         {
-          error: {
+          status: false,
+          message: 'Invalid token type. Access token required.',
+          data: {
             code: 'AUTH_INVALID_TOKEN',
-            message: 'Invalid token type. Access token required.',
           },
         },
         401
@@ -107,9 +104,10 @@ export async function authMiddleware(c: Context, next: Next) {
     // Handle unexpected errors
     return c.json(
       {
-        error: {
+        status: false,
+        message: 'An unexpected error occurred during authentication',
+        data: {
           code: 'SERVER_ERROR',
-          message: 'An unexpected error occurred during authentication',
         },
       },
       500

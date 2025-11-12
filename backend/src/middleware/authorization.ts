@@ -54,9 +54,10 @@ export function authorize(options: AuthorizationOptions = {}) {
         if (!options.roles.includes(user.role)) {
           return c.json(
             {
-              error: {
+              status: false,
+              message: `Access denied. Required role: ${options.roles.join(' or ')}`,
+              data: {
                 code: 'AUTH_FORBIDDEN',
-                message: `Access denied. Required role: ${options.roles.join(' or ')}`,
               },
             },
             403
@@ -71,9 +72,10 @@ export function authorize(options: AuthorizationOptions = {}) {
         if (!orgId) {
           return c.json(
             {
-              error: {
+              status: false,
+              message: 'Organization ID is required in route parameters',
+              data: {
                 code: 'INVALID_INPUT',
-                message: 'Organization ID is required in route parameters',
               },
             },
             400
@@ -84,9 +86,10 @@ export function authorize(options: AuthorizationOptions = {}) {
         if (user.organizationId !== orgId) {
           return c.json(
             {
-              error: {
+              status: false,
+              message: 'Access denied. You do not belong to this organization.',
+              data: {
                 code: 'AUTH_FORBIDDEN',
-                message: 'Access denied. You do not belong to this organization.',
               },
             },
             403
@@ -101,9 +104,10 @@ export function authorize(options: AuthorizationOptions = {}) {
         if (!topicId) {
           return c.json(
             {
-              error: {
+              status: false,
+              message: 'Topic ID is required in route parameters',
+              data: {
                 code: 'INVALID_INPUT',
-                message: 'Topic ID is required in route parameters',
               },
             },
             400
@@ -115,9 +119,10 @@ export function authorize(options: AuthorizationOptions = {}) {
           if (!user.supervisorTopicId) {
             return c.json(
               {
-                error: {
+                status: false,
+                message: 'Supervisor does not have an assigned topic',
+                data: {
                   code: 'AUTH_FORBIDDEN',
-                  message: 'Supervisor does not have an assigned topic',
                 },
               },
               403
@@ -127,9 +132,10 @@ export function authorize(options: AuthorizationOptions = {}) {
           if (user.supervisorTopicId !== topicId) {
             return c.json(
               {
-                error: {
+                status: false,
+                message: 'Access denied. Supervisors can only access their assigned topic.',
+                data: {
                   code: 'AUTH_FORBIDDEN',
-                  message: 'Access denied. Supervisors can only access their assigned topic.',
                 },
               },
               403
@@ -147,9 +153,10 @@ export function authorize(options: AuthorizationOptions = {}) {
           if (!topic) {
             return c.json(
               {
-                error: {
+                status: false,
+                message: 'Topic not found',
+                data: {
                   code: 'TOPIC_NOT_FOUND',
-                  message: 'Topic not found',
                 },
               },
               404
@@ -159,9 +166,10 @@ export function authorize(options: AuthorizationOptions = {}) {
           if (topic.organization_id !== user.organizationId) {
             return c.json(
               {
-                error: {
+                status: false,
+                message: 'Access denied. Topic does not belong to your organization.',
+                data: {
                   code: 'AUTH_FORBIDDEN',
-                  message: 'Access denied. Topic does not belong to your organization.',
                 },
               },
               403
@@ -175,9 +183,10 @@ export function authorize(options: AuthorizationOptions = {}) {
       // Handle unexpected errors
       return c.json(
         {
-          error: {
+          status: false,
+          message: 'An unexpected error occurred during authorization',
+          data: {
             code: 'SERVER_ERROR',
-            message: 'An unexpected error occurred during authorization',
           },
         },
         500
