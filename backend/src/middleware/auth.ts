@@ -1,5 +1,6 @@
 import type { Context, Next } from 'hono';
 import { verifyToken, type JWTPayload } from '@/utils/auth';
+import { ApiError } from '@/utils/apiResponse';
 
 /**
  * Extended context with authenticated user information
@@ -25,29 +26,13 @@ export async function authMiddleware(c: Context, next: Next) {
     const authHeader = c.req.header('Authorization');
     
     if (!authHeader) {
-      return c.json(
-        {
-          error: {
-            code: 'AUTH_UNAUTHORIZED',
-            message: 'Missing authorization header',
-          },
-        },
-        401
-      );
+      return ApiError.unauthorized(c, 'Missing authorization header');
     }
 
     // Check for Bearer token format
     const parts = authHeader.split(' ');
     if (parts.length !== 2 || parts[0] !== 'Bearer') {
-      return c.json(
-        {
-          error: {
-            code: 'AUTH_UNAUTHORIZED',
-            message: 'Invalid authorization header format. Expected: Bearer <token>',
-          },
-        },
-        401
-      );
+      return ApiError.unauthorized(c, 'Invalid authorization header format. Expected: Bearer <token>');
     }
 
     const token = parts[1]!;
@@ -61,41 +46,16 @@ export async function authMiddleware(c: Context, next: Next) {
       
       // Handle token expiration specifically
       if (errorMessage.includes('expired')) {
-        return c.json(
-          {
-            error: {
-              code: 'AUTH_TOKEN_EXPIRED',
-              message: 'Access token has expired. Please refresh your token.',
-            },
-          },
-          401
-        );
+        return ApiError.unauthorized(c, 'Access token has expired. Please refresh your token.', 'AUTH_TOKEN_EXPIRED');
       }
 
       // Handle other token verification errors
-      return c.json(
-        {
-          error: {
-            code: 'AUTH_INVALID_TOKEN',
-            message: 'Invalid or malformed token',
-            details: errorMessage,
-          },
-        },
-        401
-      );
+      return ApiError.unauthorized(c, 'Invalid or malformed token', 'AUTH_INVALID_TOKEN', errorMessage);
     }
 
     // Ensure this is an access token, not a refresh token
     if (payload.type !== 'access') {
-      return c.json(
-        {
-          error: {
-            code: 'AUTH_INVALID_TOKEN',
-            message: 'Invalid token type. Access token required.',
-          },
-        },
-        401
-      );
+      return ApiError.unauthorized(c, 'Invalid token type. Access token required.', 'AUTH_INVALID_TOKEN');
     }
 
     // Attach user information to context
@@ -105,15 +65,7 @@ export async function authMiddleware(c: Context, next: Next) {
     await next();
   } catch (error) {
     // Handle unexpected errors
-    return c.json(
-      {
-        error: {
-          code: 'SERVER_ERROR',
-          message: 'An unexpected error occurred during authentication',
-        },
-      },
-      500
-    );
+    return ApiError.serverError(c, 'An unexpected error occurred during authentication');
   }
 }
 

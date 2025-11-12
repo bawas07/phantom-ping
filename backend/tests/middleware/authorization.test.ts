@@ -120,7 +120,8 @@ describe('Authorization Middleware', () => {
       const data = await res.json() as any;
       
       expect(res.status).toBe(403);
-      expect(data.error.code).toBe('AUTH_FORBIDDEN');
+      expect(data.status).toBe(false);
+      expect(data.data.code).toBe('AUTH_FORBIDDEN');
     });
 
     test('should allow owner to access owner-or-admin route', async () => {
@@ -162,7 +163,8 @@ describe('Authorization Middleware', () => {
       const data = await res.json() as any;
       
       expect(res.status).toBe(403);
-      expect(data.error.code).toBe('AUTH_FORBIDDEN');
+      expect(data.status).toBe(false);
+      expect(data.data.code).toBe('AUTH_FORBIDDEN');
     });
 
     test('should allow all privileged roles to access owner-admin-supervisor route', async () => {
@@ -198,7 +200,8 @@ describe('Authorization Middleware', () => {
       const data = await res.json() as any;
       
       expect(res.status).toBe(403);
-      expect(data.error.code).toBe('AUTH_FORBIDDEN');
+      expect(data.status).toBe(false);
+      expect(data.data.code).toBe('AUTH_FORBIDDEN');
     });
 
     test('should support custom role combinations', async () => {
@@ -255,8 +258,9 @@ describe('Authorization Middleware', () => {
       const data = await res.json() as any;
       
       expect(res.status).toBe(403);
-      expect(data.error.code).toBe('AUTH_FORBIDDEN');
-      expect(data.error.message).toContain('do not belong to this organization');
+      expect(data.status).toBe(false);
+      expect(data.data.code).toBe('AUTH_FORBIDDEN');
+      expect(data.message).toContain('do not belong to this organization');
     });
 
     test('should return error when orgId is missing from route', async () => {
@@ -277,7 +281,8 @@ describe('Authorization Middleware', () => {
       const data = await res.json() as any;
       
       expect(res.status).toBe(400);
-      expect(data.error.code).toBe('INVALID_INPUT');
+      expect(data.status).toBe(false);
+      expect(data.data.code).toBe('INVALID_INPUT');
     });
   });
 
@@ -307,8 +312,9 @@ describe('Authorization Middleware', () => {
       const data = await res.json() as any;
       
       expect(res.status).toBe(403);
-      expect(data.error.code).toBe('AUTH_FORBIDDEN');
-      expect(data.error.message).toContain('can only access their assigned topic');
+      expect(data.status).toBe(false);
+      expect(data.data.code).toBe('AUTH_FORBIDDEN');
+      expect(data.message).toContain('can only access their assigned topic');
     });
 
     test('should deny supervisor without assigned topic', async () => {
@@ -322,8 +328,9 @@ describe('Authorization Middleware', () => {
       const data = await res.json() as any;
       
       expect(res.status).toBe(403);
-      expect(data.error.code).toBe('AUTH_FORBIDDEN');
-      expect(data.error.message).toContain('does not have an assigned topic');
+      expect(data.status).toBe(false);
+      expect(data.data.code).toBe('AUTH_FORBIDDEN');
+      expect(data.message).toContain('does not have an assigned topic');
     });
 
     test('should allow owner to access any topic in their organization', async () => {
@@ -365,8 +372,9 @@ describe('Authorization Middleware', () => {
       const data = await res.json() as any;
       
       expect(res.status).toBe(403);
-      expect(data.error.code).toBe('AUTH_FORBIDDEN');
-      expect(data.error.message).toContain('does not belong to your organization');
+      expect(data.status).toBe(false);
+      expect(data.data.code).toBe('AUTH_FORBIDDEN');
+      expect(data.message).toContain('does not belong to your organization');
     });
 
     test('should return error for non-existent topic', async () => {
@@ -380,7 +388,8 @@ describe('Authorization Middleware', () => {
       const data = await res.json() as any;
       
       expect(res.status).toBe(404);
-      expect(data.error.code).toBe('TOPIC_NOT_FOUND');
+      expect(data.status).toBe(false);
+      expect(data.data.code).toBe('TOPIC_NOT_FOUND');
     });
 
     test('should return error when topicId is missing from route', async () => {
@@ -401,7 +410,8 @@ describe('Authorization Middleware', () => {
       const data = await res.json() as any;
       
       expect(res.status).toBe(400);
-      expect(data.error.code).toBe('INVALID_INPUT');
+      expect(data.status).toBe(false);
+      expect(data.data.code).toBe('INVALID_INPUT');
     });
   });
 
@@ -431,7 +441,8 @@ describe('Authorization Middleware', () => {
       const data = await res.json() as any;
       
       expect(res.status).toBe(403);
-      expect(data.error.code).toBe('AUTH_FORBIDDEN');
+      expect(data.status).toBe(false);
+      expect(data.data.code).toBe('AUTH_FORBIDDEN');
     });
 
     test('should fail when supervisor tries to access wrong topic', async () => {
@@ -445,7 +456,8 @@ describe('Authorization Middleware', () => {
       const data = await res.json() as any;
       
       expect(res.status).toBe(403);
-      expect(data.error.code).toBe('AUTH_FORBIDDEN');
+      expect(data.status).toBe(false);
+      expect(data.data.code).toBe('AUTH_FORBIDDEN');
     });
   });
 });

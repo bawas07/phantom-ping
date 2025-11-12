@@ -1,6 +1,7 @@
 import type { Context, Next } from 'hono';
 import { getAuthUser } from './auth';
 import { queryOne } from '@/db';
+import { ApiError } from '@/utils/apiResponse';
 
 /**
  * User role type
@@ -52,15 +53,7 @@ export function authorize(options: AuthorizationOptions = {}) {
       // Check role-based permissions
       if (options.roles && options.roles.length > 0) {
         if (!options.roles.includes(user.role)) {
-          return c.json(
-            {
-              error: {
-                code: 'AUTH_FORBIDDEN',
-                message: `Access denied. Required role: ${options.roles.join(' or ')}`,
-              },
-            },
-            403
-          );
+          return ApiError.forbidden(c, `Access denied. Required role: ${options.roles.join(' or ')}`);
         }
       }
       
@@ -69,28 +62,12 @@ export function authorize(options: AuthorizationOptions = {}) {
         const orgId = c.req.param('orgId');
         
         if (!orgId) {
-          return c.json(
-            {
-              error: {
-                code: 'INVALID_INPUT',
-                message: 'Organization ID is required in route parameters',
-              },
-            },
-            400
-          );
+          return ApiError.badRequest(c, 'Organization ID is required in route parameters');
         }
         
         // Check if user belongs to the organization
         if (user.organizationId !== orgId) {
-          return c.json(
-            {
-              error: {
-                code: 'AUTH_FORBIDDEN',
-                message: 'Access denied. You do not belong to this organization.',
-              },
-            },
-            403
-          );
+          return ApiError.forbidden(c, 'Access denied. You do not belong to this organization.');
         }
       }
       
@@ -99,41 +76,17 @@ export function authorize(options: AuthorizationOptions = {}) {
         const topicId = c.req.param('topicId');
         
         if (!topicId) {
-          return c.json(
-            {
-              error: {
-                code: 'INVALID_INPUT',
-                message: 'Topic ID is required in route parameters',
-              },
-            },
-            400
-          );
+          return ApiError.badRequest(c, 'Topic ID is required in route parameters');
         }
         
         // If user is a supervisor, verify they can only access their assigned topic
         if (user.role === 'supervisor') {
           if (!user.supervisorTopicId) {
-            return c.json(
-              {
-                error: {
-                  code: 'AUTH_FORBIDDEN',
-                  message: 'Supervisor does not have an assigned topic',
-                },
-              },
-              403
-            );
+            return ApiError.forbidden(c, 'Supervisor does not have an assigned topic');
           }
           
           if (user.supervisorTopicId !== topicId) {
-            return c.json(
-              {
-                error: {
-                  code: 'AUTH_FORBIDDEN',
-                  message: 'Access denied. Supervisors can only access their assigned topic.',
-                },
-              },
-              403
-            );
+            return ApiError.forbidden(c, 'Access denied. Supervisors can only access their assigned topic.');
           }
         }
         
@@ -145,27 +98,11 @@ export function authorize(options: AuthorizationOptions = {}) {
           );
           
           if (!topic) {
-            return c.json(
-              {
-                error: {
-                  code: 'TOPIC_NOT_FOUND',
-                  message: 'Topic not found',
-                },
-              },
-              404
-            );
+            return ApiError.notFound(c, 'Topic not found', 'TOPIC_NOT_FOUND');
           }
           
           if (topic.organization_id !== user.organizationId) {
-            return c.json(
-              {
-                error: {
-                  code: 'AUTH_FORBIDDEN',
-                  message: 'Access denied. Topic does not belong to your organization.',
-                },
-              },
-              403
-            );
+            return ApiError.forbidden(c, 'Access denied. Topic does not belong to your organization.');
           }
         }
       }
@@ -173,15 +110,7 @@ export function authorize(options: AuthorizationOptions = {}) {
       await next();
     } catch (error) {
       // Handle unexpected errors
-      return c.json(
-        {
-          error: {
-            code: 'SERVER_ERROR',
-            message: 'An unexpected error occurred during authorization',
-          },
-        },
-        500
-      );
+      return ApiError.serverError(c, 'An unexpected error occurred during authorization');
     }
   };
 }

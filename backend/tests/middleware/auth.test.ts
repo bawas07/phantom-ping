@@ -88,8 +88,9 @@ describe('Authentication Middleware', () => {
       const data = await res.json() as any;
       
       expect(res.status).toBe(401);
-      expect(data.error.code).toBe('AUTH_UNAUTHORIZED');
-      expect(data.error.message).toContain('Missing authorization header');
+      expect(data.status).toBe(false);
+      expect(data.data.code).toBe('AUTH_UNAUTHORIZED');
+      expect(data.message).toContain('Missing authorization header');
     });
   });
 
@@ -105,8 +106,9 @@ describe('Authentication Middleware', () => {
       const data = await res.json() as any;
       
       expect(res.status).toBe(401);
-      expect(data.error.code).toBe('AUTH_UNAUTHORIZED');
-      expect(data.error.message).toContain('Invalid authorization header format');
+      expect(data.status).toBe(false);
+      expect(data.data.code).toBe('AUTH_UNAUTHORIZED');
+      expect(data.message).toContain('Invalid authorization header format');
     });
 
     test('should reject non-Bearer token', async () => {
@@ -122,7 +124,8 @@ describe('Authentication Middleware', () => {
       const data = await res.json() as any;
       
       expect(res.status).toBe(401);
-      expect(data.error.code).toBe('AUTH_UNAUTHORIZED');
+      expect(data.status).toBe(false);
+      expect(data.data.code).toBe('AUTH_UNAUTHORIZED');
     });
   });
 
@@ -138,7 +141,8 @@ describe('Authentication Middleware', () => {
       const data = await res.json() as any;
       
       expect(res.status).toBe(401);
-      expect(data.error.code).toBe('AUTH_INVALID_TOKEN');
+      expect(data.status).toBe(false);
+      expect(data.data.code).toBe('AUTH_INVALID_TOKEN');
     });
 
     test('should reject refresh token on protected route', async () => {
@@ -154,8 +158,9 @@ describe('Authentication Middleware', () => {
       const data = await res.json() as any;
       
       expect(res.status).toBe(401);
-      expect(data.error.code).toBe('AUTH_INVALID_TOKEN');
-      expect(data.error.message).toContain('Access token required');
+      expect(data.status).toBe(false);
+      expect(data.data.code).toBe('AUTH_INVALID_TOKEN');
+      expect(data.message).toContain('Access token required');
     });
   });
 

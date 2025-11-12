@@ -1,0 +1,518 @@
+openapi: 3.0.3
+info:
+  title: Phantom Ping API
+  description: |
+    Real-time group pager system API with hierarchical organization management.
+    
+    ## Authentication
+    Most endpoints require JWT authentication via Bearer token in the Authorization header.
+    Access tokens expire after 15 minutes. Use the refresh endpoint to obtain new tokens.
+    
+    ## Standard Response Format
+    All endpoints return responses in the following format:
+    ```json
+    {
+      "status": boolean,
+      "message": "Human-readable message",
+      "data": {}
+    }
+    ```
+    
+    ## Error Codes
+    - `AUTH_INVALID_CREDENTIALS` - Invalid PIN or Organization ID
+    - `AUTH_UNAUTHORIZED` - Missing or invalid token
+    - `AUTH_TOKEN_EXPIRED` - Access token has expired
+    - `AUTH_INVALID_TOKEN` - Invalid token format or signature
+    - `AUTH_FORBIDDEN` - Insufficient permissions
+    - `ORG_NOT_FOUND` - Organization does not exist
+    - `ORG_ID_TOO_LONG` - Organization ID exceeds 15 characters
+    - `ORG_ID_EXISTS` - Organization ID already exists
+    - `USER_NOT_FOUND` - User does not exist
+    - `TOPIC_NOT_FOUND` - Topic does not exist
+    - `MESSAGE_NOT_FOUND` - Message does not exist
+    - `ROLE_CONFLICT` - Cannot be Admin and Supervisor simultaneously
+    - `PERMISSION_DENIED` - User lacks required permissions
+    - `INVALID_INPUT` - Validation error on request data
+    - `SUPERVISOR_TOPIC_REQUIRED` - Supervisor role requires topic assignment
+    - `OWNERSHIP_TRANSFER_INVALID` - Can only transfer ownership to existing Admins
+    - `SERVER_ERROR` - Internal server error
+  version: 1.0.0
+  contact:
+    name: Phantom Ping API Support
+
+servers:
+  - url: http://localhost:3000
+    description: Development server
+  - url: https://api.phantomping.example.com
+    description: Production server
+
+tags:
+  - name: Authentication
+    description: User authentication and token management
+  - name: Organizations
+    description: Organization and user management
+  - name: Topics
+    description: Topic management and user assignments
+  - name: Broadcast
+    description: Message broadcasting and acknowledgements
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT access token obtained from login endpoint
+
+  schemas:
+    ApiResponse:
+      type: object
+      required:
+        - status
+        - message
+        - data
+      properties:
+        status:
+          type: boolean
+          description: True for success, false for error
+        message:
+          type: string
+          description: Human-readable message describing the operation result
+        data:
+          type: object
+          description: Response payload (success data or error details)
+
+    ErrorData:
+      type: object
+      required:
+        - code
+      properties:
+        code:
+          type: string
+          description: Machine-readable error code
+          enum:
+            - AUTH_INVALID_CREDENTIALS
+            - AUTH_UNAUTHORIZED
+            - AUTH_TOKEN_EXPIRED
+            - AUTH_INVALID_TOKEN
+            - AUTH_FORBIDDEN
+            - ORG_NOT_FOUND
+            - ORG_ID_TOO_LONG
+            - ORG_ID_EXISTS
+            - USER_NOT_FOUND
+            - TOPIC_NOT_FOUND
+            - MESSAGE_NOT_FOUND
+            - ROLE_CONFLICT
+            - PERMISSION_DENIED
+            - INVALID_INPUT
+            - SUPERVISOR_TOPIC_REQUIRED
+            - OWNERSHIP_TRANSFER_INVALID
+            - SERVER_ERROR
+        details:
+          type: object
+          description: Additional error context
+          additionalProperties: true
+
+    UserProfile:
+      type: object
+      required:
+        - userId
+        - organizationId
+        - name
+        - email
+        - role
+        - notificationEnabled
+      properties:
+        userId:
+          type: string
+          format: uuid
+          description: User's unique identifier (UUIDv7)
+          example: "01234567-89ab-7def-0123-456789abcdef"
+        organizationId:
+          type: string
+          maxLength: 15
+          description: Organization identifier (user-provided, max 15 characters)
+          example: "FIRE-DEPT-01"
+        name:
+          type: string
+          description: User's full name
+          example: "John Doe"
+        email:
+          type: string
+          format: email
+          description: User's email address
+          example: "john.doe@example.com"
+        role:
+          type: string
+          enum: [owner, admin, supervisor, normal]
+          description: User's role in the organization
+        supervisorTopicId:
+          type: string
+          format: uuid
+          description: Topic ID if user is a supervisor (UUIDv7)
+          example: "01234567-89ab-7def-0123-456789abcdef"
+        notificationEnabled:
+          type: boolean
+          description: Whether notifications are enabled for this user
+
+    LoginRequest:
+      type: object
+      required:
+        - pin
+        - organizationId
+      properties:
+        pin:
+          type: string
+          pattern: '^\d{6}$'
+          description: User's 6-digit PIN
+          example: "123456"
+        organizationId:
+          type: string
+          maxLength: 15
+          description: Organization identifier
+          example: "FIRE-DEPT-01"
+
+    LoginResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            status:
+              type: boolean
+              example: true
+            message:
+              type: string
+              example: "Login successful"
+            data:
+              type: object
+              required:
+                - accessToken
+                - refreshToken
+                - user
+              properties:
+                accessToken:
+                  type: string
+                  description: JWT access token (15-minute expiration)
+                  example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                refreshToken:
+                  type: string
+                  description: Refresh token (7-day expiration)
+                  example: "a1b2c3d4e5f6..."
+                user:
+                  $ref: '#/components/schemas/UserProfile'
+
+    RefreshTokenRequest:
+      type: object
+      required:
+        - refreshToken
+      properties:
+        refreshToken:
+          type: string
+          description: Current refresh token
+          example: "a1b2c3d4e5f6..."
+
+    RefreshTokenResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            status:
+              type: boolean
+              example: true
+            message:
+              type: string
+              example: "Token refreshed successfully"
+            data:
+              type: object
+              required:
+                - accessToken
+                - refreshToken
+              properties:
+                accessToken:
+                  type: string
+                  description: New JWT access token (15-minute expiration)
+                  example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                refreshToken:
+                  type: string
+                  description: New refresh token (7-day expiration)
+                  example: "x9y8z7w6v5u4..."
+
+    LogoutRequest:
+      type: object
+      required:
+        - refreshToken
+      properties:
+        refreshToken:
+          type: string
+          description: Refresh token to invalidate
+          example: "a1b2c3d4e5f6..."
+
+    LogoutResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            status:
+              type: boolean
+              example: true
+            message:
+              type: string
+              example: "Logout successful"
+            data:
+              type: object
+              example: {}
+
+    ErrorResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            status:
+              type: boolean
+              example: false
+            message:
+              type: string
+              example: "Invalid PIN or Organization ID"
+            data:
+              $ref: '#/components/schemas/ErrorData'
+
+  responses:
+    UnauthorizedError:
+      description: Authentication required or token invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            status: false
+            message: "Missing authorization header"
+            data:
+              code: "AUTH_UNAUTHORIZED"
+
+    ForbiddenError:
+      description: Insufficient permissions
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            status: false
+            message: "Access denied. Required role: owner or admin"
+            data:
+              code: "AUTH_FORBIDDEN"
+
+    NotFoundError:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            status: false
+            message: "User not found"
+            data:
+              code: "USER_NOT_FOUND"
+
+    ValidationError:
+      description: Invalid input data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            status: false
+            message: "Organization ID exceeds 15 characters"
+            data:
+              code: "INVALID_INPUT"
+              details:
+                field: "organizationId"
+                maxLength: 15
+
+    ServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            status: false
+            message: "An unexpected error occurred"
+            data:
+              code: "SERVER_ERROR"
+
+paths:
+  /api/auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: User login
+      description: |
+        Authenticates a user with PIN and Organization ID.
+        Returns access token (15-minute expiration), refresh token (7-day expiration), and user profile.
+        
+        **Authentication:** None required (public endpoint)
+        
+        **Rate Limiting:** This endpoint is rate-limited to prevent brute-force attacks.
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            example:
+              pin: "123456"
+              organizationId: "FIRE-DEPT-01"
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+              example:
+                status: true
+                message: "Login successful"
+                data:
+                  accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  refreshToken: "a1b2c3d4e5f6789012345678901234567890123456789012345678901234"
+                  user:
+                    userId: "01234567-89ab-7def-0123-456789abcdef"
+                    organizationId: "FIRE-DEPT-01"
+                    name: "John Doe"
+                    email: "john.doe@example.com"
+                    role: "admin"
+                    notificationEnabled: true
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: false
+                message: "Invalid PIN or Organization ID"
+                data:
+                  code: "AUTH_INVALID_CREDENTIALS"
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /api/auth/refresh:
+    post:
+      tags:
+        - Authentication
+      summary: Refresh access token
+      description: |
+        Exchanges a valid refresh token for new access and refresh tokens.
+        The old refresh token is invalidated and replaced with a new one.
+        
+        **Authentication:** None required (uses refresh token in request body)
+        
+        **Token Rotation:** This endpoint implements refresh token rotation for security.
+        Each refresh operation invalidates the old token and issues a new one.
+      operationId: refreshToken
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequest'
+            example:
+              refreshToken: "a1b2c3d4e5f6789012345678901234567890123456789012345678901234"
+      responses:
+        '200':
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefreshTokenResponse'
+              example:
+                status: true
+                message: "Token refreshed successfully"
+                data:
+                  accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  refreshToken: "x9y8z7w6v5u4321098765432109876543210987654321098765432109876"
+        '401':
+          description: Invalid or expired refresh token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                invalidToken:
+                  value:
+                    status: false
+                    message: "Invalid refresh token"
+                    data:
+                      code: "AUTH_UNAUTHORIZED"
+                expiredToken:
+                  value:
+                    status: false
+                    message: "Refresh token has expired"
+                    data:
+                      code: "AUTH_TOKEN_EXPIRED"
+                userNotFound:
+                  value:
+                    status: false
+                    message: "User not found"
+                    data:
+                      code: "USER_NOT_FOUND"
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /api/auth/logout:
+    post:
+      tags:
+        - Authentication
+      summary: User logout
+      description: |
+        Logs out a user by invalidating their refresh token.
+        The access token will remain valid until expiration (15 minutes),
+        but the refresh token is immediately invalidated.
+        
+        **Authentication:** Bearer token required
+      operationId: logout
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LogoutRequest'
+            example:
+              refreshToken: "a1b2c3d4e5f6789012345678901234567890123456789012345678901234"
+      responses:
+        '200':
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogoutResponse'
+              example:
+                status: true
+                message: "Logout successful"
+                data: {}
+        '401':
+          description: Invalid refresh token or missing authorization
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                invalidToken:
+                  value:
+                    status: false
+                    message: "Invalid refresh token"
+                    data:
+                      code: "AUTH_UNAUTHORIZED"
+                missingAuth:
+                  value:
+                    status: false
+                    message: "Missing authorization header"
+                    data:
+                      code: "AUTH_UNAUTHORIZED"
+        '500':
+          $ref: '#/components/responses/ServerError'
