@@ -70,6 +70,7 @@
 
 
 
+
     - Update auth middleware error responses to use `{status: false, message: string, data: {code: string}}` format
     - Update authorization middleware error responses to use standardized format
     - Update corresponding middleware tests to expect new response format
