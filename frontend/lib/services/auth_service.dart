@@ -3,12 +3,14 @@ import 'dart:convert';
 import 'package:get/get.dart';
 
 import '../core/services/storage_service.dart';
+import '../core/services/websocket_service.dart';
 import '../data/models/user_profile.dart';
 import '../data/repositories/auth_repository.dart';
 
 class AuthService extends GetxService {
   final AuthRepository _authRepository = AuthRepository();
   final StorageService _storageService = StorageService();
+  WebSocketService? _wsService;
 
   // Observable state
   final Rx<UserProfile?> currentUser = Rx<UserProfile?>(null);
@@ -19,6 +21,12 @@ class AuthService extends GetxService {
   void onInit() {
     super.onInit();
     _loadUserFromStorage();
+    // Get WebSocketService if available (may not be initialized yet)
+    try {
+      _wsService = Get.find<WebSocketService>();
+    } catch (e) {
+      // WebSocketService not yet initialized
+    }
   }
 
   // Load user from storage on app start
@@ -56,6 +64,10 @@ class AuthService extends GetxService {
       // Update state
       currentUser.value = authResponse.user;
       isAuthenticated.value = true;
+
+      // Connect WebSocket
+      _wsService ??= Get.find<WebSocketService>();
+      await _wsService?.connect();
     } catch (e) {
       rethrow;
     } finally {
@@ -67,6 +79,10 @@ class AuthService extends GetxService {
   Future<void> logout() async {
     try {
       isLoading.value = true;
+
+      // Disconnect WebSocket
+      _wsService ??= Get.find<WebSocketService>();
+      await _wsService?.disconnect();
 
       // Get refresh token before clearing
       final refreshToken = await _storageService.getRefreshToken();

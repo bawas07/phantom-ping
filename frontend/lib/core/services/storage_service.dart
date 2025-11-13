@@ -51,4 +51,15 @@ class StorageService {
   Future<void> clearAll() async {
     await _storage.deleteAll();
   }
+
+  // Helper methods for token management
+  Future<void> saveTokens(String accessToken, String refreshToken) async {
+    await saveAccessToken(accessToken);
+    await saveRefreshToken(refreshToken);
+  }
+
+  Future<void> clearTokens() async {
+    await deleteAccessToken();
+    await deleteRefreshToken();
+  }
 }
