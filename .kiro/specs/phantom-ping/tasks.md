@@ -68,9 +68,6 @@
 
   - [x] 3.5 Update existing middleware to use standardized API response format
 
-
-
-
     - Update auth middleware error responses to use `{status: false, message: string, data: {code: string}}` format
     - Update authorization middleware error responses to use standardized format
     - Update corresponding middleware tests to expect new response format
@@ -78,13 +75,7 @@
 
 - [x] 4. Implement authentication service and endpoints
 
-
-
-
-
   - [x] 4.1 Create authentication service
-
-
 
     - Implement login function (validate PIN + Organization ID, return access and refresh tokens)
     - Implement refresh token function (validate refresh token, issue new tokens)
@@ -92,7 +83,6 @@
     - _Requirements: 9.1, 9.2, 9.4_
 
   - [x] 4.2 Create authentication API endpoints
-
 
     - Implement POST /api/auth/login endpoint
     - Implement POST /api/auth/refresh endpoint
@@ -209,9 +199,9 @@
     - Navigate to appropriate screen on successful login based on role
     - _Requirements: 9.1, 9.2, 9.3_
 
-- [ ] 10. Implement Flutter frontend WebSocket client
+- [x] 10. Implement Flutter frontend WebSocket client
 
-  - [ ] 10.1 Create WebSocket service
+  - [x] 10.1 Create WebSocket service
 
     - Implement WebSocket connection with JWT authentication
     - Implement connection lifecycle management (connect on login, disconnect on logout)
@@ -219,7 +209,7 @@
     - Handle background/foreground transitions
     - _Requirements: 10.1, 10.2, 10.4_
 
-  - [ ] 10.2 Implement message event handlers
+  - [x] 10.2 Implement message event handlers
     - Parse incoming 'message:broadcast' events
     - Emit events to notification service
     - Send 'message:acknowledge' events to server
