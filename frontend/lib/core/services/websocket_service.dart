@@ -30,6 +30,9 @@ class WebSocketService extends GetxService {
   final _messageController = StreamController<BroadcastMessage>.broadcast();
   Stream<BroadcastMessage> get messageStream => _messageController.stream;
 
+  // Message queue for offline scenarios
+  final List<Map<String, dynamic>> _messageQueue = [];
+
   // Reconnection configuration
   static const int _maxReconnectAttempts = 5;
   static const Duration _initialReconnectDelay = Duration(seconds: 2);
@@ -96,6 +99,9 @@ class WebSocketService extends GetxService {
 
       // Start heartbeat
       _startHeartbeat();
+
+      // Process queued messages
+      _processMessageQueue();
 
       _logger.info('WebSocket connected successfully');
     } catch (e) {
@@ -215,21 +221,47 @@ class WebSocketService extends GetxService {
 
   /// Send message acknowledgement to server
   Future<void> acknowledgeMessage(String messageId, String userId) async {
+    final message = {
+      'event': 'message:acknowledge',
+      'payload': {'messageId': messageId, 'userId': userId},
+    };
+
     if (!isConnected.value) {
-      throw Exception('WebSocket not connected');
+      // Queue message for later if offline
+      _messageQueue.add(message);
+      _logger.info('Message queued for later: $messageId');
+      return;
     }
 
     try {
-      final message = jsonEncode({
-        'event': 'message:acknowledge',
-        'payload': {'messageId': messageId, 'userId': userId},
-      });
-
-      _channel?.sink.add(message);
+      _channel?.sink.add(jsonEncode(message));
       _logger.info('Message acknowledgement sent: $messageId');
     } catch (e) {
       _logger.error('Error sending acknowledgement', e);
+      // Queue message on error
+      _messageQueue.add(message);
       rethrow;
+    }
+  }
+
+  /// Process queued messages after reconnection
+  void _processMessageQueue() {
+    if (_messageQueue.isEmpty) return;
+
+    _logger.info('Processing ${_messageQueue.length} queued messages');
+
+    final messages = List<Map<String, dynamic>>.from(_messageQueue);
+    _messageQueue.clear();
+
+    for (final message in messages) {
+      try {
+        _channel?.sink.add(jsonEncode(message));
+        _logger.info('Queued message sent: ${message['payload']['messageId']}');
+      } catch (e) {
+        _logger.error('Error sending queued message', e);
+        // Re-queue on failure
+        _messageQueue.add(message);
+      }
     }
   }
 
