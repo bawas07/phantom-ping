@@ -4,12 +4,14 @@ import 'package:get/get.dart';
 
 import '../core/services/storage_service.dart';
 import '../core/services/websocket_service.dart';
+import '../core/utils/logger.dart';
 import '../data/models/user_profile.dart';
 import '../data/repositories/auth_repository.dart';
 
 class AuthService extends GetxService {
   final AuthRepository _authRepository = AuthRepository();
   final StorageService _storageService = StorageService();
+  final Logger _logger = Logger('AuthService');
   WebSocketService? _wsService;
 
   // Observable state
@@ -41,7 +43,7 @@ class AuthService extends GetxService {
         isAuthenticated.value = true;
       }
     } catch (e) {
-      print('Error loading user from storage: $e');
+      _logger.error('Error loading user from storage', e);
       await _storageService.clearAll();
     }
   }
@@ -99,7 +101,7 @@ class AuthService extends GetxService {
       currentUser.value = null;
       isAuthenticated.value = false;
     } catch (e) {
-      print('Error during logout: $e');
+      _logger.error('Error during logout', e);
       // Still clear local data even if API call fails
       await _storageService.clearAll();
       currentUser.value = null;

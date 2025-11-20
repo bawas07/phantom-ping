@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:get/get.dart' hide Response, FormData;
 
 import '../constants/api_constants.dart';
+import '../services/connectivity_service.dart';
 import '../services/storage_service.dart';
 import '../utils/logger.dart';
 import 'api_exception.dart';
@@ -14,6 +15,8 @@ class ApiClient extends GetxService {
   late final Dio _dio;
   final Logger _logger = Logger('ApiClient');
   final StorageService _storageService = Get.find<StorageService>();
+  final ConnectivityService _connectivityService =
+      Get.find<ConnectivityService>();
 
   Dio get dio => _dio;
 
@@ -49,6 +52,13 @@ class ApiClient extends GetxService {
     ]);
   }
 
+  /// Check connectivity before making request
+  void _checkConnectivity() {
+    if (!_connectivityService.isOnline) {
+      throw NetworkException();
+    }
+  }
+
   /// Perform GET request
   ///
   /// [path] - API endpoint path
@@ -61,6 +71,7 @@ class ApiClient extends GetxService {
     Map<String, dynamic>? queryParameters,
     Options? options,
   }) async {
+    _checkConnectivity();
     try {
       final response = await _dio.get<T>(
         path,
@@ -90,6 +101,7 @@ class ApiClient extends GetxService {
     Map<String, dynamic>? queryParameters,
     Options? options,
   }) async {
+    _checkConnectivity();
     try {
       final response = await _dio.post<T>(
         path,
@@ -120,6 +132,7 @@ class ApiClient extends GetxService {
     Map<String, dynamic>? queryParameters,
     Options? options,
   }) async {
+    _checkConnectivity();
     try {
       final response = await _dio.put<T>(
         path,
@@ -150,6 +163,7 @@ class ApiClient extends GetxService {
     Map<String, dynamic>? queryParameters,
     Options? options,
   }) async {
+    _checkConnectivity();
     try {
       final response = await _dio.patch<T>(
         path,
@@ -180,6 +194,7 @@ class ApiClient extends GetxService {
     Map<String, dynamic>? queryParameters,
     Options? options,
   }) async {
+    _checkConnectivity();
     try {
       final response = await _dio.delete<T>(
         path,

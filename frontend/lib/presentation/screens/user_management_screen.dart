@@ -85,7 +85,7 @@ class UserManagementScreen extends StatelessWidget {
                       const SizedBox(height: 12),
                       Obx(
                         () => DropdownButtonFormField<String>(
-                          value: controller.selectedRole.value,
+                          initialValue: controller.selectedRole.value,
                           decoration: const InputDecoration(
                             labelText: 'Role',
                             prefixIcon: Icon(Icons.badge),
@@ -270,7 +270,7 @@ class UserManagementScreen extends StatelessWidget {
                                     decoration: BoxDecoration(
                                       color: controller
                                           .getRoleBadgeColor(user.role)
-                                          .withOpacity(0.2),
+                                          .withValues(alpha: 0.2),
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     child: Text(
