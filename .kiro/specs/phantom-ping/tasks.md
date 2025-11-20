@@ -239,9 +239,9 @@
     - Create vibration + screen pulse + sound pattern for high severity (continuous until acknowledged)
     - _Requirements: 10.1, 10.2, 10.3_
 
-- [ ] 12. Implement Flutter frontend user screens (Normal User)
+- [x] 12. Implement Flutter frontend user screens (Normal User)
 
-  - [ ] 12.1 Create message inbox screen
+  - [x] 12.1 Create message inbox screen
 
     - Display list of received broadcast messages
     - Show message level indicator (color-coded)
@@ -249,7 +249,7 @@
     - Implement pull-to-refresh
     - _Requirements: 10.5, 11.5_
 
-  - [ ] 12.2 Create message detail screen
+  - [x] 12.2 Create message detail screen
 
     - Display full message content (title, message, code)
     - Display message level and timestamp
@@ -257,7 +257,7 @@
     - Call acknowledgement API and stop notifications on button press
     - _Requirements: 10.5, 11.1, 11.2, 11.3, 11.4, 11.5_
 
-  - [ ] 12.3 Create settings screen
+  - [x] 12.3 Create settings screen
     - Implement notification status toggle switch
     - Persist notification preference locally and to backend
     - Display user information (name, email, organization)

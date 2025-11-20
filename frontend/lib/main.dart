@@ -5,6 +5,8 @@ import 'core/services/connectivity_service.dart';
 import 'core/services/notification_service.dart';
 import 'core/services/websocket_service.dart';
 import 'presentation/screens/login_screen.dart';
+import 'presentation/screens/message_inbox_screen.dart';
+import 'presentation/screens/settings_screen.dart';
 import 'services/auth_service.dart';
 
 void main() async {
@@ -85,6 +87,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       home: const LoginScreen(),
       getPages: [
         GetPage(name: '/login', page: () => const LoginScreen()),
+        // Normal User screens
+        GetPage(
+          name: '/user-dashboard',
+          page: () => const MessageInboxScreen(),
+        ),
+        GetPage(name: '/settings', page: () => const SettingsScreen()),
         // Placeholder routes - will be implemented in later tasks
         GetPage(
           name: '/admin-dashboard',
@@ -96,12 +104,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           name: '/supervisor-dashboard',
           page: () => const Scaffold(
             body: Center(child: Text('Supervisor Dashboard - Coming Soon')),
-          ),
-        ),
-        GetPage(
-          name: '/user-dashboard',
-          page: () => const Scaffold(
-            body: Center(child: Text('User Dashboard - Coming Soon')),
           ),
         ),
       ],
