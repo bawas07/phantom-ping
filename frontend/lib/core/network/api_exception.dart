@@ -1,113 +1,108 @@
-import 'package:dio/dio.dart';
-
-/// Base class for all API exceptions
-abstract class ApiException implements Exception {
+/// Custom exception class for API-related errors
+/// Provides structured error information with error codes and messages
+class ApiException implements Exception {
   final String message;
+  final String? code;
   final int? statusCode;
   final dynamic data;
 
-  ApiException(this.message, {this.statusCode, this.data});
+  ApiException({required this.message, this.code, this.statusCode, this.data});
+
+  factory ApiException.fromDioError(dynamic error) {
+    if (error.response != null) {
+      final response = error.response;
+      final statusCode = response?.statusCode;
+      final responseData = response?.data;
+
+      String message = 'An error occurred';
+      String? code;
+
+      if (responseData is Map<String, dynamic>) {
+        message = responseData['message'] ?? message;
+        code = responseData['data']?['code'];
+      }
+
+      return ApiException(
+        message: message,
+        code: code,
+        statusCode: statusCode,
+        data: responseData,
+      );
+    }
+
+    return ApiException(
+      message: error.message ?? 'An unexpected error occurred',
+      statusCode: null,
+      code: null,
+    );
+  }
 
   @override
-  String toString() => message;
+  String toString() {
+    if (code != null) {
+      return 'ApiException: $message (Code: $code, Status: $statusCode)';
+    }
+    return 'ApiException: $message (Status: $statusCode)';
+  }
 }
 
-/// Exception thrown when network connection fails
+/// Exception for network connectivity issues
 class NetworkException extends ApiException {
-  NetworkException([super.message = 'Network connection failed']);
+  NetworkException({String? message})
+    : super(
+        message: message ?? 'No internet connection. Please try again.',
+        code: 'NETWORK_ERROR',
+      );
 }
 
-/// Exception thrown when request times out
+/// Exception for timeout errors
 class TimeoutException extends ApiException {
-  TimeoutException([super.message = 'Request timeout']);
+  TimeoutException({String? message})
+    : super(
+        message:
+            message ??
+            'Connection timeout. Please check your internet connection.',
+        code: 'TIMEOUT_ERROR',
+      );
 }
 
-/// Exception thrown for unauthorized access (401)
-class UnauthorizedException extends ApiException {
-  UnauthorizedException([super.message = 'Unauthorized access'])
-    : super(statusCode: 401);
+/// Exception for authentication errors
+class AuthException extends ApiException {
+  AuthException({String? message})
+    : super(
+        message: message ?? 'Authentication failed. Please login again.',
+        code: 'AUTH_ERROR',
+        statusCode: 401,
+      );
 }
 
-/// Exception thrown for forbidden access (403)
-class ForbiddenException extends ApiException {
-  ForbiddenException([super.message = 'Access forbidden'])
-    : super(statusCode: 403);
+/// Exception for authorization/permission errors
+class PermissionException extends ApiException {
+  PermissionException({String? message})
+    : super(
+        message:
+            message ?? 'You do not have permission to perform this action.',
+        code: 'PERMISSION_ERROR',
+        statusCode: 403,
+      );
 }
 
-/// Exception thrown when resource not found (404)
+/// Exception for resource not found errors
 class NotFoundException extends ApiException {
-  NotFoundException([super.message = 'Resource not found'])
-    : super(statusCode: 404);
+  NotFoundException({String? message})
+    : super(
+        message: message ?? 'The requested resource was not found.',
+        code: 'NOT_FOUND',
+        statusCode: 404,
+      );
 }
 
-/// Exception thrown for validation errors (400, 422)
+/// Exception for validation errors
 class ValidationException extends ApiException {
-  ValidationException(super.message, {super.data}) : super(statusCode: 400);
-}
-
-/// Exception thrown for server errors (500+)
-class ServerException extends ApiException {
-  ServerException([super.message = 'Server error occurred'])
-    : super(statusCode: 500);
-}
-
-/// Exception thrown for unknown errors
-class UnknownException extends ApiException {
-  UnknownException([super.message = 'An unknown error occurred']);
-}
-
-/// Helper class to convert DioException to custom ApiException
-class ApiExceptionHandler {
-  static ApiException handleDioException(DioException error) {
-    switch (error.type) {
-      case DioExceptionType.connectionTimeout:
-      case DioExceptionType.sendTimeout:
-      case DioExceptionType.receiveTimeout:
-        return TimeoutException('Request timeout. Please try again.');
-
-      case DioExceptionType.connectionError:
-        return NetworkException(
-          'Network connection failed. Please check your internet connection.',
-        );
-
-      case DioExceptionType.badResponse:
-        return _handleResponseError(error);
-
-      case DioExceptionType.cancel:
-        return UnknownException('Request was cancelled');
-
-      default:
-        return UnknownException(error.message ?? 'An unknown error occurred');
-    }
-  }
-
-  static ApiException _handleResponseError(DioException error) {
-    final statusCode = error.response?.statusCode;
-    final data = error.response?.data;
-
-    // Try to extract error message from response
-    String message = 'An error occurred';
-    if (data is Map<String, dynamic>) {
-      message = data['message'] as String? ?? message;
-    }
-
-    switch (statusCode) {
-      case 400:
-      case 422:
-        return ValidationException(message, data: data);
-      case 401:
-        return UnauthorizedException(message);
-      case 403:
-        return ForbiddenException(message);
-      case 404:
-        return NotFoundException(message);
-      case 500:
-      case 502:
-      case 503:
-      case 504:
-        return ServerException(message);
-      default:
-        return UnknownException(message);
-    }
-  }
+  ValidationException({String? message})
+    : super(
+        message: message ?? 'Invalid input. Please check your data.',
+        code: 'VALIDATION_ERROR',
+        statusCode: 400,
+      );
 }
