@@ -14,49 +14,46 @@ abstract class ApiException implements Exception {
 
 /// Exception thrown when network connection fails
 class NetworkException extends ApiException {
-  NetworkException([String message = 'Network connection failed'])
-    : super(message);
+  NetworkException([super.message = 'Network connection failed']);
 }
 
 /// Exception thrown when request times out
 class TimeoutException extends ApiException {
-  TimeoutException([String message = 'Request timeout']) : super(message);
+  TimeoutException([super.message = 'Request timeout']);
 }
 
 /// Exception thrown for unauthorized access (401)
 class UnauthorizedException extends ApiException {
-  UnauthorizedException([String message = 'Unauthorized access'])
-    : super(message, statusCode: 401);
+  UnauthorizedException([super.message = 'Unauthorized access'])
+    : super(statusCode: 401);
 }
 
 /// Exception thrown for forbidden access (403)
 class ForbiddenException extends ApiException {
-  ForbiddenException([String message = 'Access forbidden'])
-    : super(message, statusCode: 403);
+  ForbiddenException([super.message = 'Access forbidden'])
+    : super(statusCode: 403);
 }
 
 /// Exception thrown when resource not found (404)
 class NotFoundException extends ApiException {
-  NotFoundException([String message = 'Resource not found'])
-    : super(message, statusCode: 404);
+  NotFoundException([super.message = 'Resource not found'])
+    : super(statusCode: 404);
 }
 
 /// Exception thrown for validation errors (400, 422)
 class ValidationException extends ApiException {
-  ValidationException(String message, {dynamic data})
-    : super(message, statusCode: 400, data: data);
+  ValidationException(super.message, {super.data}) : super(statusCode: 400);
 }
 
 /// Exception thrown for server errors (500+)
 class ServerException extends ApiException {
-  ServerException([String message = 'Server error occurred'])
-    : super(message, statusCode: 500);
+  ServerException([super.message = 'Server error occurred'])
+    : super(statusCode: 500);
 }
 
 /// Exception thrown for unknown errors
 class UnknownException extends ApiException {
-  UnknownException([String message = 'An unknown error occurred'])
-    : super(message);
+  UnknownException([super.message = 'An unknown error occurred']);
 }
 
 /// Helper class to convert DioException to custom ApiException
