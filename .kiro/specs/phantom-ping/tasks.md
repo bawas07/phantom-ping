@@ -264,9 +264,9 @@
     - Add logout button
     - _Requirements: 12.1, 12.2, 12.3, 12.4_
 
-- [ ] 13. Implement Flutter frontend admin/owner screens
+- [x] 13. Implement Flutter frontend admin/owner screens
 
-  - [ ] 13.1 Create organization dashboard screen
+  - [x] 13.1 Create organization dashboard screen
 
     - Display organization information (ID, name)
     - Show user count and topic count
@@ -274,7 +274,7 @@
     - Show ownership transfer option (Owner only)
     - _Requirements: 1.3, 3.1, 3.2, 4.1, 5.1, 6.1_
 
-  - [ ] 13.2 Create user management screen
+  - [x] 13.2 Create user management screen
 
     - Display list of users with name, email, role
     - Implement register new user form (name, email, role)
@@ -284,7 +284,7 @@
     - Add role-based UI (Owner can promote/demote Admins, Admin cannot)
     - _Requirements: 2.1, 2.2, 2.4, 3.1, 3.2, 4.1, 4.2, 4.4_
 
-  - [ ] 13.3 Create topic management screen
+  - [x] 13.3 Create topic management screen
 
     - Display list of topics with name and supervisor count
     - Implement create topic form
@@ -293,7 +293,7 @@
     - Implement demote Supervisor action
     - _Requirements: 5.1, 5.2, 5.1.1, 5.1.4, 5.2.1, 6.1, 6.2_
 
-  - [ ] 13.4 Create broadcast composer screen
+  - [x] 13.4 Create broadcast composer screen
 
     - Implement severity level selector (low, medium, high)
     - Implement scope selector (organization-wide or topic) - Admin/Owner only
@@ -306,7 +306,7 @@
     - For Supervisors: auto-set scope to topic and use assigned topic
     - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 8.1, 8.2, 8.3, 8.4_
 
-  - [ ] 13.5 Create ownership transfer screen (Owner only)
+  - [x] 13.5 Create ownership transfer screen (Owner only)
     - Display list of current Admins
     - Implement transfer ownership action with confirmation dialog
     - Show warning that current Owner will become Admin
