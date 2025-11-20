@@ -1,3 +1,5 @@
+import 'package:dio/dio.dart';
+
 /// Custom exception class for API-related errors
 /// Provides structured error information with error codes and messages
 class ApiException implements Exception {
@@ -105,4 +107,51 @@ class ValidationException extends ApiException {
         code: 'VALIDATION_ERROR',
         statusCode: 400,
       );
+}
+
+/// Exception for unknown/unexpected errors
+class UnknownException extends ApiException {
+  UnknownException(String message)
+    : super(message: message, code: 'UNKNOWN_ERROR');
+}
+
+/// Handler for converting Dio exceptions to custom ApiException types
+class ApiExceptionHandler {
+  static ApiException handleDioException(DioException error) {
+    if (error.type == DioExceptionType.connectionTimeout ||
+        error.type == DioExceptionType.sendTimeout ||
+        error.type == DioExceptionType.receiveTimeout) {
+      return TimeoutException();
+    }
+
+    if (error.type == DioExceptionType.connectionError ||
+        error.type == DioExceptionType.unknown) {
+      return NetworkException();
+    }
+
+    if (error.response != null) {
+      final statusCode = error.response?.statusCode;
+      final responseData = error.response?.data;
+
+      String? message;
+      if (responseData is Map<String, dynamic>) {
+        message = responseData['message'] as String?;
+      }
+
+      switch (statusCode) {
+        case 401:
+          return AuthException(message: message);
+        case 403:
+          return PermissionException(message: message);
+        case 404:
+          return NotFoundException(message: message);
+        case 400:
+          return ValidationException(message: message);
+        default:
+          return ApiException.fromDioError(error);
+      }
+    }
+
+    return UnknownException(error.message ?? 'An unexpected error occurred');
+  }
 }

@@ -3,13 +3,11 @@ import 'package:get/get.dart';
 
 import '../controllers/broadcast_composer_controller.dart';
 
-class BroadcastComposerScreen extends StatelessWidget {
+class BroadcastComposerScreen extends GetView<BroadcastComposerController> {
   const BroadcastComposerScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(BroadcastComposerController());
-
     return Scaffold(
       appBar: AppBar(title: const Text('Send Broadcast')),
       body: Obx(() {
@@ -89,36 +87,36 @@ class BroadcastComposerScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 12),
                         Obx(
-                          () => Column(
-                            children: [
-                              RadioListTile<String>(
-                                value: 'organization',
-                                groupValue: controller.selectedScope.value,
-                                onChanged: (value) {
-                                  if (value != null) {
-                                    controller.selectedScope.value = value;
-                                    controller.selectedTopic.value = null;
-                                  }
-                                },
-                                title: const Text('Organization-wide'),
-                                subtitle: const Text(
-                                  'Send to all users in organization',
+                          () => RadioGroup<String>(
+                            groupValue: controller.selectedScope.value,
+                            onChanged: (value) {
+                              if (value != null) {
+                                controller.selectedScope.value = value;
+                                if (value == 'organization') {
+                                  controller.selectedTopic.value = null;
+                                }
+                              }
+                            },
+                            child: Column(
+                              children: [
+                                RadioListTile<String>(
+                                  value: 'organization',
+                                  title: const Text('Organization-wide'),
+                                  subtitle: const Text(
+                                    'Send to all users in organization',
+                                  ),
+                                  dense: true,
                                 ),
-                                dense: true,
-                              ),
-                              RadioListTile<String>(
-                                value: 'topic',
-                                groupValue: controller.selectedScope.value,
-                                onChanged: (value) {
-                                  if (value != null) {
-                                    controller.selectedScope.value = value;
-                                  }
-                                },
-                                title: const Text('Topic'),
-                                subtitle: const Text('Send to specific topic'),
-                                dense: true,
-                              ),
-                            ],
+                                RadioListTile<String>(
+                                  value: 'topic',
+                                  title: const Text('Topic'),
+                                  subtitle: const Text(
+                                    'Send to specific topic',
+                                  ),
+                                  dense: true,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],
@@ -148,7 +146,8 @@ class BroadcastComposerScreen extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 12),
                                 DropdownButtonFormField<String>(
-                                  value: controller.selectedTopic.value?.id,
+                                  initialValue:
+                                      controller.selectedTopic.value?.id,
                                   decoration: const InputDecoration(
                                     labelText: 'Topic',
                                     prefixIcon: Icon(Icons.topic),
@@ -342,7 +341,7 @@ class BroadcastComposerScreen extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isSelected ? color.withOpacity(0.1) : Colors.transparent,
+          color: isSelected ? color.withValues(alpha: 0.1) : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: isSelected ? color : Colors.grey.shade300,

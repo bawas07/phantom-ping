@@ -2,10 +2,12 @@ import 'package:dio/dio.dart';
 
 import '../../core/constants/api_constants.dart';
 import '../../core/network/dio_client.dart';
+import '../../core/utils/logger.dart';
 import '../models/auth_response.dart';
 
 class AuthRepository {
   final DioClient _dioClient = DioClient();
+  final Logger _logger = Logger('AuthRepository');
 
   Future<AuthResponse> login(String pin, String organizationId) async {
     try {
@@ -45,7 +47,7 @@ class AuthRepository {
       );
     } on DioException catch (e) {
       // Log error but don't throw - logout should always succeed locally
-      print('Logout API call failed: ${e.message}');
+      _logger.error('Logout API call failed', e);
     }
   }
 }

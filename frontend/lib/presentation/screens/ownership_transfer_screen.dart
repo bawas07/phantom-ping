@@ -3,13 +3,11 @@ import 'package:get/get.dart';
 
 import '../controllers/ownership_transfer_controller.dart';
 
-class OwnershipTransferScreen extends StatelessWidget {
+class OwnershipTransferScreen extends GetView<OwnershipTransferController> {
   const OwnershipTransferScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(OwnershipTransferController());
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Transfer Ownership'),
@@ -155,7 +153,7 @@ class OwnershipTransferScreen extends StatelessWidget {
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.blue.withOpacity(0.2),
+                                color: Colors.blue.withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: const Text(
